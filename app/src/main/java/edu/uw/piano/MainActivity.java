@@ -2,6 +2,10 @@ package edu.uw.piano;
 
 import android.app.Activity;
 import android.graphics.Rect;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
@@ -13,6 +17,9 @@ import java.util.HashMap;
 public class MainActivity extends Activity {
 
     private static final String TAG = "Piano";
+    private SoundPool sp;
+    private int[] soundID;
+    private boolean[] IDLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +34,91 @@ public class MainActivity extends Activity {
     private void initializeSoundPool(){
         //TODO: Create the SoundPool
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            //API >= 21
+            SoundPool.Builder sp = new SoundPool.Builder();
+            sp.setMaxStreams(5);
+            sp.setAudioAttributes(
+                    new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_GAME)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+            );
+
+            this.sp = sp.build();
+
+        }
+        else {
+            sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        }
         //TODO: Load the sounds
+
+        soundID = new int[12];
+        IDLoad = new boolean[12];
+//        soundID[0] = sp.load(this, R.raw.piano_040, 1);
+//        soundID[1] = sp.load(this, R.raw.piano_041, 1);
+//        sound
+
+        sp.setOnLoadCompleteListener (new SoundPool.OnLoadCompleteListener() {
+                @Override
+                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                    if (status == 0) {
+                        if (sp.load(getBaseContext(), R.raw.piano_040, 1) == sampleId) {
+                            IDLoad[0] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_041, 1) == sampleId) {
+                            IDLoad[1] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_042, 1) == sampleId) {
+                            IDLoad[2] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_043, 1) == sampleId) {
+                            IDLoad[3] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_044, 1) == sampleId) {
+                            IDLoad[4] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_045, 1) == sampleId) {
+                            IDLoad[5] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_046, 1) == sampleId) {
+                            IDLoad[6] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_047, 1) == sampleId) {
+                            IDLoad[7] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_048, 1) == sampleId) {
+                            IDLoad[8] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_049, 1) == sampleId) {
+                            IDLoad[9] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_050, 1) == sampleId) {
+                            IDLoad[10] = true;
+                        }
+                        if (sp.load(getBaseContext(), R.raw.piano_051, 1) == sampleId) {
+                            IDLoad[11] = true;
+                        }
+                    }
+                }
+            }
+        );
+
+        soundID[0] = sp.load(this, R.raw.piano_040, 1);
+        soundID[1] = sp.load(this, R.raw.piano_041, 1);
+        soundID[2] = sp.load(this, R.raw.piano_042, 1);
+        soundID[3] = sp.load(this, R.raw.piano_043, 1);
+        soundID[4] = sp.load(this, R.raw.piano_044, 1);
+        soundID[5] = sp.load(this, R.raw.piano_045, 1);
+        soundID[6] = sp.load(this, R.raw.piano_046, 1);
+        soundID[7] = sp.load(this, R.raw.piano_047, 1);
+        soundID[8] = sp.load(this, R.raw.piano_048, 1);
+        soundID[9] = sp.load(this, R.raw.piano_049, 1);
+        soundID[10] = sp.load(this, R.raw.piano_050, 1);
+        soundID[11] = sp.load(this, R.raw.piano_051, 1);
+
+
     }
+
 
 
     @Override
@@ -54,6 +144,11 @@ public class MainActivity extends Activity {
         Log.v(TAG, "Tapped key: "+KEY_NAMES[key]);
 
         //TODO: Play sound depending on key pressed!
+        if (IDLoad[key]) {
+            Log.v(TAG, "WHAIIIII "+KEY_NAMES[key]);
+
+            sp.play(soundID[key], 1, 1, 1, 1, 1);
+        }
 
     }
 
